@@ -33,6 +33,6 @@ NOTE: each time you edit the code to add/change playlist links, you must quit an
 After that, run the server with the command:
 ```flask run```
 
-Go to http://127.0.0.1:5000/, which will direct you to give authorization through google
+Go to http://127.0.0.1:5000/, which will direct you to give authorization through google.
 After authorization is completed successfully, go to the desired route (eg: http://127.0.0.1:5000/copy_playlist_into_new_playlist) to copy playlists
 
