@@ -64,7 +64,7 @@ def callback():
     flow.fetch_token(authorization_response=authorization_response)
     credentials = flow.credentials
     session["credentials"] = credentials.to_json()
-    return "successfuly completed authorization, go to desired route (/copy_playlist_into_new_playlist, /copy_playlist_into_existing_playlist, /copy_playlist_into_existing_playlist_dont_copy_duplicates) to copy playlists"
+    return "successfuly completed authorization, go to desired route (/copy_playlist_into_new_playlist, /copy_playlist_into_existing_playlist, /copy_playlist_into_existing_playlist_dont_copy_duplicates, /remove_duplicate_videos_in_playlist) to copy playlists or remove duplicate videos in playlists"
 
 
 #method to copy playlist, handles all 3 cases for copying
