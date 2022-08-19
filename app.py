@@ -27,8 +27,8 @@ def copy_playlist_into_new_playlist():
 
 @app.route("/copy_playlist_into_existing_playlist")
 def copy_playlist_into_existing_playlist():
-    playlist_link = "https://www.youtube.com/playlist?list=PLrVfyimyec-SUzLg8AzANBBNWTn2uqVUA"
-    existing_playlist_link = "https://www.youtube.com/playlist?list=PLrVfyimyec-RlaCLfuusV3Ns5zI4YQ27P"
+    playlist_link = "https://www.youtube.com/playlist?list=PLbTkpy4DiE7gODKZJcdVi8NVVpUFeF8Wm"
+    existing_playlist_link = "https://www.youtube.com/playlist?list=PLbTkpy4DiE7gNvOkzWfy_LRTaKzk5syYc"
     return copy_playlist(playlist_link, False, existing_playlist_link)
 
 @app.route("/copy_playlist_into_existing_playlist_dont_copy_duplicates")
@@ -36,6 +36,13 @@ def copy_playlist_into_existing_playlist_dont_copy_duplicates():
     playlist_link = "https://www.youtube.com/playlist?list=PLbTkpy4DiE7gODKZJcdVi8NVVpUFeF8Wm"
     existing_playlist_link = "https://www.youtube.com/playlist?list=PLbTkpy4DiE7hw9ojfH0MFKdssqDPQDgK1"
     return copy_playlist(playlist_link, False, existing_playlist_link, True)
+
+@app.route("/remove_duplicate_videos_in_playlist")
+def remove_duplicate_videos_in_playlist():
+    playlist_link = "https://www.youtube.com/playlist?list=PLbTkpy4DiE7gODKZJcdVi8NVVpUFeF8Wm"
+    return remove_duplicate(playlist_link)
+
+
 
 
 #default route to log in
@@ -45,6 +52,7 @@ def login():
     flow.redirect_uri = url_for('callback', _external=True)
     auth_url, state = flow.authorization_url(prompt='consent')
     return redirect(auth_url)
+
 
 #callback route
 #note: credentials.to_json converts credentials to str, must use json.loads to convert str to dict, extract token and other info through dict
@@ -109,6 +117,7 @@ def copy_playlist(link, new_playlist_or_not, existing_link = None, dont_copy_dup
     link_of_playlist_with_copied_vid = "https://www.youtube.com/playlist?list=" + new_playlist_id
     return "copy playlist success, the link to the playlist with the copied videos is " + link_of_playlist_with_copied_vid
 
+
 #helper method to create a new playlist
 def create_new_playlist(link):
     youtube = create_youtube_object()
@@ -162,6 +171,30 @@ def get_playlist_items(link):
         next_page_token = response.get("nextPageToken")
 
     return playlist_items
+
+
+def remove_duplicate(link):
+    playlist_items = get_playlist_items(link)
+    video_id_list = []
+    playlist_item_id_list = []
+    for video in playlist_items:
+        if video["status"]["privacyStatus"] == "public":
+            video_id = video["contentDetails"]["videoId"]
+            if not (video_id in video_id_list):
+                video_id_list.append(video_id)
+            else:
+                playlist_item_id_list.append(video["id"])
+    print(json.dumps(video_id_list))
+    print(json.dumps(playlist_item_id_list))
+
+    youtube = create_youtube_object()
+    for duplicate_playlist_item_id in playlist_item_id_list:
+        request = youtube.playlistItems().delete(
+        id=duplicate_playlist_item_id
+        )
+        request.execute()
+    
+    return "duplicate videos in " + link + " sucessfully removed!"
 
 
 #helper method to create youtube object
