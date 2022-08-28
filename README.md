@@ -1,4 +1,4 @@
-# FlaskYouTubePlaylistCopier
+# YouTube-Playlist-Copier
 Web application created with python flask. Copies existing YouTube playlist into a new or existing playlist.
 
 ## Installations/Requirements
